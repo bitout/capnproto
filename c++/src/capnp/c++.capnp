@@ -28,5 +28,5 @@ annotation name(field, enumerant, struct, enum, interface, method, param, group,
 
 # duAR extensions
 annotation include(file): Text;
-annotation codeDef(file, field, struct, enum, group, union): Text;
-annotation baseClass(struct): Text;
+annotation code(file): Text;
+annotation super(struct): Text;

@@ -59,8 +59,8 @@ static constexpr uint64_t NAME_ANNOTATION_ID = 0xf264a779fef191ceull;
 
 // duAR extentions
 static constexpr uint64_t INCLUDE_ANNOTATION_ID = 0xcf38185663ac13e6ull;
-static constexpr uint64_t CODEDEF_ANNOTATION_ID = 0xc0e6748896755d1eull;
-static constexpr uint64_t SUBCLASSOF_ANNOTATION_ID = 0x90fb5450f837fc88ull;
+static constexpr uint64_t CODE_ANNOTATION_ID = 0xdf32b128842485a7ull;
+static constexpr uint64_t SUPER_ANNOTATION_ID = 0xe3a9296d348aaa3bull;
 
 bool hasDiscriminantValue(const schema::Field::Reader& reader) {
   return reader.getDiscriminantValue() != schema::Field::NO_DISCRIMINANT;
@@ -208,14 +208,6 @@ public:
     return CppTypeName(kj::strTree(name), false);
   }
 
-  static CppTypeName addCodeDef(kj::StringPtr code) {
-    return CppTypeName(kj::strTree(code), false);
-  }
-
-  static CppTypeName addInherent(kj::StringPtr baseName) {
-      return CppTypeName(kj::strTree(" : public ", baseName), false);
-  }
-
   void addMemberType(kj::StringPtr innerName) {
     // Append "::innerName" to refer to a member.
 
@@ -344,10 +336,6 @@ private:
       usedImports.insert(node.getId());
       KJ_IF_MAYBE(ns, annotationValue(node, NAMESPACE_ANNOTATION_ID)) {
           return CppTypeName::makeNamespace(ns->getText());
-      } else KJ_IF_MAYBE(ns, annotationValue(node, CODEDEF_ANNOTATION_ID)) {
-          return CppTypeName::addCodeDef(ns->getText());
-      } else KJ_IF_MAYBE(ns, annotationValue(node, SUBCLASSOF_ANNOTATION_ID)) {
-          return CppTypeName::addInherent(ns->getText());
       } else {
           return CppTypeName::makeRoot();
       }
@@ -2951,7 +2939,7 @@ private:
         else if(ann_id == INCLUDE_ANNOTATION_ID) {
             cppIncludes.add(annotation.getValue().getText());
         }
-        else if(ann_id == CODEDEF_ANNOTATION_ID) {
+        else if(ann_id == CODE_ANNOTATION_ID) {
             cppCodes.add(annotation.getValue().getText());
         }
         else {

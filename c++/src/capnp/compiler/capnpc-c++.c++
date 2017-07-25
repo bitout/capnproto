@@ -41,6 +41,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <iostream>
 
 #if HAVE_CONFIG_H
 #include "config.h"
@@ -55,6 +56,11 @@ namespace {
 
 static constexpr uint64_t NAMESPACE_ANNOTATION_ID = 0xb9c6f99ebf805f2cull;
 static constexpr uint64_t NAME_ANNOTATION_ID = 0xf264a779fef191ceull;
+
+// duAR extentions
+static constexpr uint64_t INCLUDE_ANNOTATION_ID = 0xcf38185663ac13e6ull;
+static constexpr uint64_t CODEDEF_ANNOTATION_ID = 0xc0e6748896755d1eull;
+static constexpr uint64_t SUBCLASSOF_ANNOTATION_ID = 0x90fb5450f837fc88ull;
 
 bool hasDiscriminantValue(const schema::Field::Reader& reader) {
   return reader.getDiscriminantValue() != schema::Field::NO_DISCRIMINANT;
@@ -191,6 +197,7 @@ public:
   }
 
   static CppTypeName makeNamespace(kj::StringPtr name) {
+      std::cout << "makeNamespace\n";
     return CppTypeName(kj::strTree(" ::", name), false);
   }
 
@@ -200,6 +207,20 @@ public:
 
   static CppTypeName makePrimitive(kj::StringPtr name) {
     return CppTypeName(kj::strTree(name), false);
+  }
+
+  static CppTypeName addInclude(kj::StringPtr incName) {
+      std::cout<< "addInclue\n";
+      return CppTypeName(kj::strTree("////Test!"), false);
+      //return CppTypeName(kj::strTree("#include ", incName,  ";"), false); 
+  }
+
+  static CppTypeName addCodeDef(kj::StringPtr code) {
+    return CppTypeName(kj::strTree(code), false);
+  }
+
+  static CppTypeName addInherent(kj::StringPtr baseName) {
+      return CppTypeName(kj::strTree(" : public ", baseName), false);
   }
 
   void addMemberType(kj::StringPtr innerName) {
@@ -329,9 +350,15 @@ private:
           "Non-file had scopeId zero; perhaps it's a method param / result struct?");
       usedImports.insert(node.getId());
       KJ_IF_MAYBE(ns, annotationValue(node, NAMESPACE_ANNOTATION_ID)) {
-        return CppTypeName::makeNamespace(ns->getText());
+          return CppTypeName::makeNamespace(ns->getText());
+      } else KJ_IF_MAYBE(ns, annotationValue(node, INCLUDE_ANNOTATION_ID)) {
+          return CppTypeName::addInclude(ns->getText());
+      } else KJ_IF_MAYBE(ns, annotationValue(node, CODEDEF_ANNOTATION_ID)) {
+          return CppTypeName::addCodeDef(ns->getText());
+      } else KJ_IF_MAYBE(ns, annotationValue(node, SUBCLASSOF_ANNOTATION_ID)) {
+          return CppTypeName::addInherent(ns->getText());
       } else {
-        return CppTypeName::makeRoot();
+          return CppTypeName::makeRoot();
       }
     } else {
       // This is a named type.

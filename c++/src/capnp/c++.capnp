@@ -24,3 +24,9 @@ $namespace("capnp::annotations");
 
 annotation namespace(file): Text;
 annotation name(field, enumerant, struct, enum, interface, method, param, group, union): Text;
+
+
+# duAR extensions
+annotation include(file): Text;
+annotation codeDef(file, field, struct, enum, group, union): Text;
+annotation baseClass(struct): Text;

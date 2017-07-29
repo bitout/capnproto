@@ -60,7 +60,7 @@ static constexpr uint64_t NAME_ANNOTATION_ID = 0xf264a779fef191ceull;
 // duAR extentions
 static constexpr uint64_t INCLUDE_ANNOTATION_ID = 0xcf38185663ac13e6ull;
 static constexpr uint64_t CODE_ANNOTATION_ID = 0xdf32b128842485a7ull;
-static constexpr uint64_t SUPER_ANNOTATION_ID = 0xe3a9296d348aaa3bull;
+//static constexpr uint64_t SUPER_ANNOTATION_ID = 0xe3a9296d348aaa3bull;
 
 bool hasDiscriminantValue(const schema::Field::Reader& reader) {
   return reader.getDiscriminantValue() != schema::Field::NO_DISCRIMINANT;
@@ -2895,7 +2895,7 @@ private:
 
   inline kj::StringTree addCppCode(const strVec& cppIncludes, const strVec& cppCodes) {
       return kj::strTree( 
-              KJ_MAP(n, cppIncludes) { return kj::strTree("#include ", fixedCppHeader(n), ";\n"); },
+              KJ_MAP(n, cppIncludes) { return kj::strTree("#include ", fixedCppHeader(n), "\n"); },
               "\n", 
               KJ_MAP(n, cppCodes) { return kj::strTree(n, '\n'); },
               "\n"
@@ -3105,7 +3105,7 @@ private:
       auto fileText = makeFileText(schema, requestedFile);
 
       writeFile(kj::str(schema.getProto().getDisplayName(), ".h"), fileText.header);
-      writeFile(kj::str(schema.getProto().getDisplayName(), ".cpp"), fileText.source);
+      writeFile(kj::str(schema.getProto().getDisplayName(), ".c++"), fileText.source);
     }
 
     return true;

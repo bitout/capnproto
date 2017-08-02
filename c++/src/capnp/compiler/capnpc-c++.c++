@@ -3021,10 +3021,10 @@ private:
           KJ_MAP(n, nodeTexts) { return kj::mv(n.capnpSchemaDefs); },
           "}  // namespace schemas\n"
           "}  // namespace capnp\n",
-          sourceDefs.size() == 0 && isNoCpp(cppIncludes, cppCodes) 
+          sourceDefs.size() == 0 //&& isNoCpp(cppIncludes, cppCodes) 
             ? kj::strTree() : kj::strTree(
                 "\n", separator, "\n",
-                addCppCode(cppIncludes, cppCodes),
+                //addCppCode(cppIncludes, cppCodes),
                 KJ_MAP(n, namespaceParts) { return kj::strTree("namespace ", n, " {\n"); }, "\n",
                 kj::mv(sourceDefs), "\n",
                 KJ_MAP(n, namespaceParts) { return kj::strTree("}  // namespace\n"); }, "\n"

@@ -1827,6 +1827,8 @@ private:
         "  Reader() = default;\n"
         "  inline explicit Reader(::capnp::_::StructReader base): _reader(base) {}\n"
         "\n"
+        "  inline const ::capnp::_::StructReader& getReader() const { return _reader; }\n"
+        "\n"
         "  inline ::capnp::MessageSize totalSize() const {\n"
         "    return _reader.totalSize().asPublic();\n"
         "  }\n"
